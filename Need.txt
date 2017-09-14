@@ -1,0 +1,8 @@
+node 6
+
+npm 4
+    npm -v
+    npm install npm@4 -g
+
+Use yarn instead of npm for installs/upgrade
+
