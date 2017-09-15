@@ -52,12 +52,9 @@ export default class BrowseMapView extends Component {
                                         coordinate={marker.coordinate}
                                         pinColor={this.pinColors[marker.type.id]}
                                         onCalloutPress={() => this.onCalloutPress(marker)}
+                                        title={marker.title}
+                                        description={marker.description}
                         >
-                            <MapView.Callout style={styles.callout}>
-                                <TouchableOpacity onPress={() => this.onCalloutPress(marker)}>
-                                    <Text>{marker.title}</Text>
-                                </TouchableOpacity>
-                            </MapView.Callout>
                         </MapView.Marker>
                     ))}
                 </MapView>
@@ -131,10 +128,6 @@ export default class BrowseMapView extends Component {
 }
 
 const styles = StyleSheet.create({
-    callout: {
-        flex: 1,
-        position: 'relative'
-    },
     reloadOuter: {
         position: "absolute",
         left: 0,
@@ -166,6 +159,6 @@ const styles = StyleSheet.create({
         padding: 10,
         alignItems: "flex-end",
         justifyContent: "flex-end",
-        //backgroundColor: "#EEEE"
+        backgroundColor: "#0000"
     },
 });
