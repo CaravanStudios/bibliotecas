@@ -156,7 +156,7 @@ export default class BrowseController extends Component {
         /*
         DataSource.fetchData("space/describe", null, function(data) {
             let s = "Space ";
-            for (let item in data) s += item + ",";
+            for (let item in data) s += item + ","; 
             console.log(s);
         });
         */
@@ -283,9 +283,18 @@ export default class BrowseController extends Component {
                 for (let i = 0; i < len; i++) {
                     item = data[i];
                     if (item.name.length) {
+                        let placeItem = {
+                            placeId: String(item.id),
+                            imageUrl: item["@files:avatar.avatarMedium"] ? item["@files:avatar.avatarMedium"] : null,
+                            type: item.type,
+                            name: item.name,
+                            description: item.description,
+                            address: item.endereco
+                        }; 
                         var l = item.location;
-                        if (l && l.latitude && l.latitude) {
+                        if (l && l.latitude && l.longitude) {
                             // Add info need by map (TODO: check if all this is need still)
+                            /*
                             item.id = String(item.id);
                             item.title = item.name; // Remove?
                             item.coordinate = {
@@ -293,8 +302,16 @@ export default class BrowseController extends Component {
                                 longitude: parseFloat(l.longitude)
                             };
                             places.push(item);
+                            */
+                            placeItem.coordinate = {
+                                latitude: parseFloat(l.latitude),
+                                longitude: parseFloat(l.longitude)
+                            };
+                            placeItem.pinTitle = item.name;
+                            places.push(placeItem);
                         }
-                        list.push(item);
+                        //list.push(item);
+                        list.push(placeItem);
                     }
                 }
                 console.log("list", list.length);
@@ -310,15 +327,18 @@ export default class BrowseController extends Component {
 
 // TODO: Combine with fetchLocations()
     fetchEvents() {
+        console.log('fetchEvents()'); 
         this.setState({loading: true, showMode: kShowModeEvents});
         this.browseMapView.clearRegionChanged();
 
         var r = this.region; //this.state.location;
         var latDiff = r.latitudeDelta / 2;
         var lngDiff = r.longitudeDelta / 2;
+
+        /*
         var params = {
             //"@select": "id,name,location,singleUrl,type,shortDescription,terms,endereco,acessibilidade,site",
-            "@select": "id,name,location,type,endereco,acessibilidade,eventOccurrences",
+            "@select": "id,name,location,type,endereco,acessibilidade,eventOccurrences.{*},eventOccurrences.event.name", 
             //"@select": "id,name,shortDescription,longDescription,rules,createTimestamp,status,isVerified,updateTimestamp,occurrences,owner,project,subTitle,registrationInfo,classificacaoEtaria,telefonePublico,preco,traducaoLibras,descricaoSonora,site,facebook,twitter,googleplus,num_sniic"
             //+ "location,public,status,eventOccurrences,parent,owner,emailPublico,emailPrivado,telefonePublico,telefone1,telefone2,acessibilidade,acessibilidade_fisica,capacidade,endereco,En_CEP,En_Nome_Logradouro,En_Num,En_Complemento,En_Bairro,En_Municipio,En_Estado,horario,criterios,site,facebook,twitter,googleplus,geoEstado,geoMunicipio,num_sniic,cnpj,esfera,esfera_tipo,certificado",
             //"@files": "(avatar.avatarMedium):url",
@@ -332,19 +352,103 @@ export default class BrowseController extends Component {
             "@from": "2016-1-1",
             "@to": "2017-12-31"
         };
+        */
+
+        // TO DO: filter libs, geolocation, search, sort by date
+        let startDate = new Date(); // today
+        let endDate = new Date();
+        endDate.setDate(endDate.getDate() + 30) // today + 30 days
+
+        let startDateString = startDate.getFullYear() + '-' + (startDate.getMonth() + 1) + '-' + startDate.getDate();
+        let endDateString = endDate.getFullYear() + '-' + (endDate.getMonth() + 1) + '-' + endDate.getDate();
+
+        console.log('date range = ' + startDateString + ' - ' + endDateString);
+
+        var params = {
+            "@select": "id, name, shortDescription, occurrences.{id,space.{id,name,type,location,endereco},rule}", 
+            "@files": "(avatar.avatarMedium):url",
+            "@from": startDateString,
+            "@to": endDateString
+        };
 
         var search = this.search; //this.state.search;
-        console.log("fetchEvents search", this.state);
-        if (search) params["@keyword"] = search;
+        //console.log("fetchEvents search", this.state);
+        // if (search) params["@keyword"] = search;
 
-        DataSource.fetchData("space/findByEvents", params, (data, error) => {
+        if (search) {
+            // HACK: Trying this out
+            console.log("fetchSpaces search", search);
+            params["@keyword"] = encodeURIComponent(search.replace(" ", "%"));
+        } else {
+            params["_geoLocation"] = "GEONEAR(" + r.longitude + "," + r.latitude + ","
+                + (MapMath.distance(r.latitude - latDiff, r.longitude - lngDiff,
+                    r.latitude + latDiff, r.longitude + lngDiff) * 1000) + ")"
+        }
+
+        DataSource.fetchData("event/findByLocation", params, (data, error) => {
             if (!error) {
                 console.log("Done", data);
                 let len = data.length;
                 let list = [], places = [], place, item;
+                let placeMap = {};
                 let events = [];
                 for (let i = 0; i < len; i++) {
                     item = data[i];
+                    
+                    if (item.occurrences) {
+                        
+                        for (let e=0; e<item.occurrences.length; e++) {
+                            
+                            let eventOccurrence = item.occurrences[e];
+                           
+                            let eoSpace = eventOccurrence.space;
+                    
+                            if (eoSpace && eoSpace.type.id == 20) { // filtering for library here, since it doesn't seem to work in the query
+                                // check if place already is in the list
+                                let placeItem = placeMap[eoSpace.id];
+                                if (placeItem) {
+                                    // place exists, just increment the count
+                                    placeMap[eoSpace.id].eventCount++
+                                }
+                                else {
+                                    placeItem = {
+                                        placeId: String(eoSpace.id),
+                                        type: eoSpace.type,
+                                        name: eoSpace.name,
+                                        description: eoSpace.description,
+                                        address: eoSpace.endereco,
+                                        eventCount:1
+                                    }
+                                    let l = eoSpace.location;
+                                    if (l && l.latitude && l.longitude) {
+                                        placeItem.coordinate = {
+                                            latitude: parseFloat(l.latitude),
+                                            longitude: parseFloat(l.longitude)
+                                        };
+                                        placeItem.pinTitle = eoSpace.name;
+                                    }
+                                    placeMap[eoSpace.id] = placeItem;
+                                    list.push(placeItem);
+                                }
+                                let eventItem = {
+                                    eventId: item.id,
+                                    name: item.name,
+                                    shortDescription: item.shortDescription,
+                                    imageUrl: item["@files:avatar.avatarMedium"] ? item["@files:avatar.avatarMedium"] : null,
+                                    ruleDescription: eventOccurrence.rule.description,   
+                                    place: placeItem
+                                }
+                                events.push(eventItem);
+                            }
+                            
+                        }
+                        
+                    }
+
+                    
+                    
+
+/*
                     if (item.name.length) {
                         var l = item.location;
                         //console.log(item.name, l);
@@ -360,18 +464,25 @@ export default class BrowseController extends Component {
                         }
                         list.push(item);
                     }
+                    
                     //console.log("EO", item.eventOccurrences);
-                    //if (item.eventOccurrences) {
-                    for (let e = 0; e < item.eventOccurrences.length; e++) {
-                        events.push(item.eventOccurrences[e]);
+                    if (item.eventOccurrences) {
+                        for (let e = 0; e < item.eventOccurrences.length; e++) {
+                            if (item.eventOccurrences[e].event) {
+                                events.push(item.eventOccurrences[e]);
+                            }
+                        }
                     }
-                    //}
+*/
                 }
+                places = Object.values(placeMap);
+
                 console.log("----------");
-                //console.log("Events", events);
-                //console.log("list", list);
-                //console.log("Places", places);
+                console.log("Events", events);
+                console.log("list", list);
+                console.log("Places", places);
                 console.log("----------");
+                
                 this.setState({places: places, events: events, items: list, loading: false, firstLoadDone: true});
             } else {
                 console.log("fetchEvents", error);

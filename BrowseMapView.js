@@ -48,13 +48,15 @@ export default class BrowseMapView extends Component {
                     ref={(ref) => this.mapView = ref}
                 >
                     {this.props.places.map(marker => (
-                        <MapView.Marker key={marker.id}
+                        
+                        <MapView.Marker key={marker.placeId}
                                         coordinate={marker.coordinate}
-                                        pinColor={this.pinColors[marker.type.id]}
+                                        pinColor={this.pinColors[marker.type.Id]}
                                         onCalloutPress={() => this.onCalloutPress(marker)}
-                                        title={marker.title}
+                                        title={marker.pinTitle}
                                         description={marker.description}
                         >
+                        
                         </MapView.Marker>
                     ))}
                 </MapView>

@@ -15,7 +15,7 @@ import MapView from "react-native-maps";
 import {LS, FAIcon} from "./Common"
 import Util from "./Util"
 import DataSource from "./DataSource"
-
+ 
 export default class DetailsController extends Component {
 
     constructor(props) {
@@ -35,9 +35,12 @@ export default class DetailsController extends Component {
         console.log("DetailsController componentWillMount", info);
 
         DataSource.fetchData("space/findOne", {
-            "id": "EQ(" + info.id + ")",
-            "@select": "id,name,location,singleUrl,type,shortDescription,longDescription,terms,endereco,acessibilidade,site,eventOccurrences"
-        }, (data) => this.setState({loading: false, details: data}), true);
+            "id": "EQ(" + info.placeId + ")",
+            "@select": "id,name,location,singleUrl,type,shortDescription,longDescription,terms,endereco,acessibilidade,site,eventOccurrences.*, eventOccurrences.event.*"
+        }, (data) => {
+            this.setState({loading: false, details: data});
+            console.log('data = ', data);
+        }, true); 
 
         /* Test
         DataSource.fetchData("event/find", {
@@ -56,8 +59,8 @@ export default class DetailsController extends Component {
         console.log("DetailsController render");
         var info = this.props.navigation.state.params.info;
         var details = this.state.details;
-        var avatar = info["@files:avatar.avatarMedium"];
-        var icon = avatar ? {uri: avatar.url} : require("./assets/avatar--space.png");
+        //var avatar = info["@files:avatar.avatarMedium"];
+        var icon = info.imageUrl ? info.imageUrl : require("./assets/avatar--space.png");
         var desc = details.longDescription ? details.longDescription : details.shortDescription;
         if (!info.coordinate) {
             info.coordinate = {
@@ -72,6 +75,9 @@ export default class DetailsController extends Component {
             longitudeDelta: 0.01,
         };
 
+        console.log('info = ', info);
+        console.log('details = ', details);
+
         return (
             <ScrollView style={styles.container}>
 
@@ -83,20 +89,20 @@ export default class DetailsController extends Component {
                     </View>
                 </View>
 
-                {info.coordinate || info.endereco ? (
+                {info.coordinate || info.address ? (
                     <TouchableOpacity style={styles.location} onPress={() => this.showMap(info)}>
                         {info.coordinate ? (
                             <MapView style={styles.map} initialRegion={initialRegion} pointerEvents="none">
-                                <MapView.Marker key={info.id}
+                                <MapView.Marker key={info.placeId}
                                                 coordinate={info.coordinate}
                                                 pinColor="red"
                                 >
                                 </MapView.Marker>
                             </MapView>
                         ) : null}
-                        {info.endereco ? (
+                        {info.address ? (
                             <Text style={styles.address}>
-                                <FAIcon name="map-marker" size={18}/> {info.endereco}
+                                <FAIcon name="map-marker" size={18}/> {info.address}
                             </Text>
                         ) : null}
                     </TouchableOpacity>
@@ -132,11 +138,11 @@ export default class DetailsController extends Component {
     }
 
     renderEvent(item, index) {
-        console.log(item);
+        console.log('renderEvent', item);
         return (
             <View key={index} style={styles.event}>
                 <Text style={styles.eventTitle}>{item.event.name}</Text>
-                <Text style={styles.eventTime}>{Util.eventTimeString(item)}</Text>
+                <Text style={styles.eventTime}>{item.rule.description}</Text>
                 <Text style={styles.eventDesc}>{item.event.shortDescription}</Text>
             </View>
         )
@@ -166,13 +172,13 @@ export default class DetailsController extends Component {
         if (Platform.OS === 'ios') {
             url = "http://maps.apple.com/?q=" + info.name;
             if (info.coordinate) url += "&ll=" + info.coordinate.latitude + "," + info.coordinate.longitude;
-            else if (info.endereco) url += "&address=" + encodeURIComponent(info.endereco);
+            else if (info.address) url += "&address=" + encodeURIComponent(info.address);
         } else {
             // geo:latitude,longitude?q=query
             // geo:0,0?q=my+street+address
             // geo:0,0?q=latitude,longitude(label)
             url = "geo:";
-            if (info.endereco) url += "0,0?q=" + encodeURIComponent(info.endereco);
+            if (info.address) url += "0,0?q=" + encodeURIComponent(info.address);
             else url += "0.0?q=" + info.coordinate.latitude + "," + info.coordinate.longitude;
             url += "(" + encodeURIComponent(info.name) + ")";
         }

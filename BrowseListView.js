@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {ListView, View, Text, Image, StyleSheet, TouchableOpacity} from "react-native";
-
+import {Theme} from "./Common"
 import Util from "./Util"
 
 export default class BrowseListView extends Component {
@@ -37,9 +37,11 @@ export default class BrowseListView extends Component {
     }
 
     renderLocationRow(props, sectionId, rowId) {
+        console.log('props = ', props);
         //console.log("renderLocationRow", sectionId, rowId, props);
-        var avatar = props["@files:avatar.avatarMedium"];
-        var icon = avatar ? {uri: avatar.url} : require("./assets/avatar--space.png");
+        //var avatar = props["@files:avatar.avatarMedium"];
+        //var icon = avatar ? {uri: avatar.url} : require("./assets/avatar--space.png");
+        var icon = props.imageUrl ? props.imageUrl : require("./assets/avatar--space.png");
         return (
             <TouchableOpacity onPress={() => {
                 console.log("rowPress", props);
@@ -49,7 +51,7 @@ export default class BrowseListView extends Component {
                     <Image style={styles.rowImage} source={icon}/>
                     <View style={styles.rowInfo}>
                         <Text style={styles.rowTitle}>{props.name}</Text>
-                        <Text style={styles.rowText}>{props.endereco}</Text>
+                        <Text style={styles.rowText}>{props.address}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -57,26 +59,30 @@ export default class BrowseListView extends Component {
     }
 
     renderEventRow(props, sectionId, rowId) {
+        
         //console.log("renderEventRow", sectionId, rowId, props);
         //var avatar = props["@files:avatar.avatarMedium"];
-        var avatar = props.event.avatar ? props.event.avatar.avatarMedium : null;
-        var icon = avatar ? {uri: avatar.url} : require("./assets/avatar--event.png");
-        console.log(new Date(props.startsAt.date).toLocaleString(), "to", new Date(props.endsAt.date).toLocaleString());
+        //var avatar = (props.event.avatar) ? props.event.avatar.avatarMedium : null;
+        //var icon = avatar ? {uri: avatar.url} : require("./assets/avatar--event.png");
+        var icon = props.imageUrl ? props.imageUrl : require("./assets/avatar--event.png");
+        //console.log(new Date(props.startsAt.date).toLocaleString(), "to", new Date(props.endsAt.date).toLocaleString());
         return (
-            <TouchableOpacity onPress={() => {
+            <TouchableOpacity onPress={() => {  
                 console.log("rowPress", props);
-                this.props.navigation.push("details", {info: props.space});
+                this.props.navigation.navigate("details", {info: props.place});
             }}>
                 <View key={rowId} style={styles.row}>
                     <Image style={styles.rowImage} source={icon}/>
                     <View style={styles.rowInfo}>
-                        <Text style={styles.rowTitle}>{props.event.name}</Text>
-                        <Text style={styles.rowTime}>{Util.eventTimeString(props)}</Text>
-                        <Text style={styles.rowText}>{props.event.shortDescription}</Text>
+                        <Text style={styles.rowPlace}>{props.place.name}</Text>
+                        <Text style={styles.rowTitle}>{props.name}</Text>
+                        <Text style={styles.rowTime}>{props.ruleDescription}</Text>
+                        <Text style={styles.rowText}>{props.shortDescription}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
         )
+        
     }
 }
 
@@ -99,6 +105,11 @@ const styles = StyleSheet.create({
     rowTitle: {
         color: "#111",
         fontSize: 16,
+        fontWeight: "500"
+    },
+    rowPlace: {
+        color: Theme.navBarColor,
+        fontSize: 14,
         fontWeight: "500"
     },
     rowTime: {
