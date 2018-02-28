@@ -403,7 +403,7 @@ export default class BrowseController extends Component {
                            
                             let eoSpace = eventOccurrence.space;
                     
-                            if (eoSpace && eoSpace.type.id == 20) { // filtering for library here, since it doesn't seem to work in the query
+                            if (eoSpace && eoSpace.type.id == 20 ) { // filtering for library here, since it doesn't seem to work in the query
                                 // check if place already is in the list
                                 let placeItem = placeMap[eoSpace.id];
                                 if (placeItem) {
