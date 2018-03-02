@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     },
     rowImage: {
         width: 72,
-        height: 72,
-        backgroundColor: "#ccc"
+        height: 72
+        
     },
     rowInfo: {
         flex: 1,

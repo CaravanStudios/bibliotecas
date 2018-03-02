@@ -139,13 +139,19 @@ export default class DetailsController extends Component {
 
     renderEvent(item, index) {
         console.log('renderEvent', item);
-        return (
-            <View key={index} style={styles.event}>
-                <Text style={styles.eventTitle}>{item.event.name}</Text>
-                <Text style={styles.eventTime}>{item.rule.description}</Text>
-                <Text style={styles.eventDesc}>{item.event.shortDescription}</Text>
-            </View>
-        )
+        if (item.event) {
+            var renderEventTitle = item.event.name;
+            var renderEventTime = item.rule.description;
+            var renderEventDescription = item.event.shortDescription;
+            return (
+                <View key={index} style={styles.event}>
+                    <Text style={styles.eventTitle}>{renderEventTitle}</Text>
+                    <Text style={styles.eventTime}>{renderEventTime}</Text>
+                    <Text style={styles.eventDesc}>{renderEventDescription}</Text>
+                </View>
+            )
+        }
+       
     }
 
     showMap(info) {
@@ -209,8 +215,7 @@ const styles = StyleSheet.create({
     },
     headerImage: {
         width: 72,
-        height: 72,
-        backgroundColor: "#ccc"
+        height: 72
     },
     headerInfo: {
         flex: 1,

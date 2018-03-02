@@ -437,6 +437,7 @@ export default class BrowseController extends Component {
                                             longitude: parseFloat(l.longitude)
                                         };
                                         placeItem.pinTitle = eoSpace.name;
+                                        placeItem.markerImage = placeMarkerImage;
                                     }
                                     placeMap[eoSpace.id] = placeItem;
                                     list.push(placeItem);
