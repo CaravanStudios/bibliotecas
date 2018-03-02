@@ -54,6 +54,12 @@ export default class BrowseController extends Component {
             longitudeDelta: 0.05
         };
         this.search = null; // TEST
+
+        _browseController = this;
+    }
+
+    static getBrowseController() {
+        return _browseController;
     }
 
     static navigationOptions = ({navigation, screenProps}) => {
@@ -72,8 +78,10 @@ export default class BrowseController extends Component {
             headerRight: (
                 <TouchableOpacity
                     onPress={() => {
+                        console.log('headerRight onPress');
                         console.log(navigation);
-                        let self = BrowseController.instance;
+                        let self = BrowseController.getBrowseController();
+                        console.log('self.state = ', self.state)
                         if (self.state.browseMode === kMapMode) {
                             navigation.setParams({rightButtonTitle: LS("Map")});
                             Animated.timing(self.state.listAnimate, {toValue: 1.0, duration: 300}).start();
@@ -86,6 +94,7 @@ export default class BrowseController extends Component {
                             }).start(() => self.setState({listVisible: false}));
                             self.setState({browseMode: kMapMode});
                         }
+                        
                     }}
                     style={Theme.styles.navBarRightButton}>
                     <Text style={Theme.styles.navBarButtonText}>
