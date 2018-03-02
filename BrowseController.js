@@ -11,6 +11,7 @@ import {
     ActivityIndicator,
     Platform
 } from "react-native";
+import placeMarkerImage from './assets/place-marker.png';
 
 import {LS, Theme, FAIcon, DEBUG} from "./Common"
 import {MapMath} from "./Util"
@@ -60,12 +61,12 @@ export default class BrowseController extends Component {
         const params = navigation.state.params || {};
         const mode = params.mode || false;
         return {
-            title: LS("Bibliotecas"),
+            title: "Bibliotecas Brasil",
             headerLeft: (
                 <TouchableOpacity
                     onPress={() => App.getApp().showMenu()}
                     style={Theme.styles.navBarLeftButton}>
-                    <FAIcon name="bars" size={18} color={Theme.navBarTextColor}/>
+                    <FAIcon name="bars" size={18} color={Theme.yellow}/>
                 </TouchableOpacity>
             ),
             headerRight: (
@@ -308,6 +309,7 @@ export default class BrowseController extends Component {
                                 longitude: parseFloat(l.longitude)
                             };
                             placeItem.pinTitle = item.name;
+                            placeItem.markerImage = placeMarkerImage;
                             places.push(placeItem);
                         }
                         //list.push(item);

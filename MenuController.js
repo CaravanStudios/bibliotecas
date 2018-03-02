@@ -81,7 +81,7 @@ export default class MenuController extends Component {
 const MenuItemView = (props) => (
     <TouchableOpacity style={styles.menuItem} onPress={props.onPress}>
         <Text style={styles.menuText}>
-            <FAIcon name={props.icon} size={18} color={Theme.navBarTextColor}/> {props.text}
+            <FAIcon name={props.icon} size={18} color={Theme.navBarTextColor}/>  {props.text}
         </Text>
     </TouchableOpacity>
 );
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         width: kMenuWidth,
-        backgroundColor: Theme.navBarColor,
+        backgroundColor: Theme.blueStencil,
         padding: 12
     },
     menuItem: {
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         width: 140
     },
     menuText: {
-        color: Theme.navBarTextColor
+        color: Theme.navBarTitleColor
     },
     info: {
         bottom: 0,

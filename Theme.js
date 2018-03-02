@@ -4,7 +4,7 @@ const colors = {
     navBarColor: "#2E86AB",         //"#eee",
     navBarBottomColor: "#17255A",   //"#ddd",
     navBarTitleColor: "#FFF",       //"#373E4D",
-    navBarTextColor: "#F8F8F8",      //"#373E4D", //"#5890FF",
+    navBarTextColor: "#FFD87D",      //"#373E4D", //"#5890FF",
 };
 
 const styles = StyleSheet.create({
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
             },
             navBarRightButton: {
                 paddingRight: 10,
-                paddingLeft: 20 // Makes touch area wider
+                paddingLeft: 20 // Makes touch area wider,
             },
             navBarButtonText: {
                 color: colors.navBarTextColor,
@@ -85,10 +85,15 @@ const styles = StyleSheet.create({
 });
 
 module.exports.Theme = {
-    navBarColor: "#2E86AB",         //"#eee",
-    navBarBottomColor: "#17255A",   //"#ddd",
+    navBarColor: "#3189A1",         //"#eee",
+    navBarBottomColor: "#FFD87D",   //"#ddd",
     navBarTitleColor: "#FFF",       //"#373E4D",
-    navBarTextColor: "#F8F8F8",      //"#373E4D", //"#5890FF",
+    navBarTextColor: "#FFF",      //"#373E4D", //"#5890FF",
+    blue: "#475B80",
+    yellow: "#FFD87D",
+    blueStencil: "#3189A1",
+    green: "#55BE8C",
+    red: "#C17372",
     colors: colors,
     styles: styles
 };

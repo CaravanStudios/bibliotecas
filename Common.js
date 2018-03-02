@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 
 import React, {NativeModules, Platform} from "react-native";
 

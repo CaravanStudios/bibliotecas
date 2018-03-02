@@ -51,6 +51,9 @@ export default class BrowseMapView extends Component {
                         
                         <MapView.Marker key={marker.placeId}
                                         coordinate={marker.coordinate}
+                                        image={marker.markerImage}
+                                        anchor={{x: 0, y: 1}}
+                                        centerOffset={{x: -60, y: 60}}
                                         pinColor={this.pinColors[marker.type.Id]}
                                         onCalloutPress={() => this.onCalloutPress(marker)}
                                         title={marker.pinTitle}
