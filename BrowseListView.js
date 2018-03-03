@@ -103,9 +103,9 @@ const styles = StyleSheet.create({
         paddingLeft: 8
     },
     rowTitle: {
-        color: "#111",
+        color: Theme.blue,
         fontSize: 16,
-        fontWeight: "500"
+        fontWeight: "700"
     },
     rowPlace: {
         color: Theme.navBarColor,

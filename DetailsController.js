@@ -11,6 +11,7 @@ import {
     StyleSheet
 } from "react-native";
 import MapView from "react-native-maps";
+import {Theme} from "./Common"
 
 import {LS, FAIcon} from "./Common"
 import Util from "./Util"
@@ -95,7 +96,7 @@ export default class DetailsController extends Component {
                             <MapView style={styles.map} initialRegion={initialRegion} pointerEvents="none">
                                 <MapView.Marker key={info.placeId}
                                                 coordinate={info.coordinate}
-                                                pinColor="red"
+                                                pinColor={Theme.red}
                                 >
                                 </MapView.Marker>
                             </MapView>
@@ -225,7 +226,8 @@ const styles = StyleSheet.create({
         //flex: 1,
         //paddingLeft: 8,
         fontSize: 18,
-        fontWeight: "600"
+        fontWeight: "600",
+        color: Theme.blue
     },
 
     row: {

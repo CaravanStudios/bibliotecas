@@ -117,12 +117,26 @@ export default class BrowseController extends Component {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     var location = position.coords;
-                    this.region = {
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                        latitudeDelta: 0.05,
-                        longitudeDelta: 0.05
-                    };
+                    console.debug('location = ', location);
+                    // if the current location is far outside of Brazil, then center on Sao Paulo
+                    if ((location.latitude > 20) || (location.latitude < -40) || (location.longitude < -80) || (location.longitude > -30)) {
+                        console.log('Resetting current location to Brazil');
+                        this.region = {
+                            latitude: -23.5413271705055,
+                            longitude: -46.6475415229797,
+                            latitudeDelta: 0.05,
+                            longitudeDelta: 0.05
+                        };
+                    }
+                    else {
+                        this.region = {
+                            latitude: location.latitude,
+                            longitude: location.longitude,
+                            latitudeDelta: 0.05,
+                            longitudeDelta: 0.05
+                        };
+                    }
+                    
                     this.fetchItems();
                     if (this.browseMapView) this.browseMapView.setRegion(this.region);
                 },
