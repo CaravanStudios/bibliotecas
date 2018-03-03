@@ -53,7 +53,7 @@ export default class BrowseMapView extends Component {
                                         coordinate={marker.coordinate}
                                         image={marker.markerImage}
                                         anchor={{x: 0, y: 1}}
-                                        centerOffset={{x: -60, y: 60}}
+                                        centerOffset={{x: -25, y: 25}}
                                         pinColor={this.pinColors[marker.type.Id]}
                                         onCalloutPress={() => this.onCalloutPress(marker)}
                                         title={marker.pinTitle}
