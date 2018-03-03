@@ -38,7 +38,7 @@ export default class MenuController extends Component {
                 <Animated.View style={[styles.menu, {left: this.state.slideAnimate}]}>
                     <MenuItemView icon="book" text={LS("Libraries")} onPress={() => this.showSpaces()}/>
                     <MenuItemView icon="calendar" text={LS("Events")} onPress={() => this.showEvents()}/>
-                    <MenuItemView icon="info-circle" text={LS("About")} onPress={() => this.showTodo("About")}/>
+                    <MenuItemView icon="info-circle" text={LS("About")} onPress={() => this.showAbout()}/>
                     <View style={styles.info}>
                         {DEBUG ? (<Text style={styles.menuText}>{LS("TEST MODE")}</Text>) : null}
                     </View>
@@ -70,6 +70,10 @@ export default class MenuController extends Component {
     showEvents() {
         Browse.showEvents();
         this.hideMenu();
+    }
+
+    showAbout() {
+        Alert.alert("Bibliotecas Brasil", "www.feitonabiblioteca.org");
     }
 
     showTodo(text) {
