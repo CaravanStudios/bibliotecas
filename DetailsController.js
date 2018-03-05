@@ -8,7 +8,8 @@ import {
     View,
     Text,
     Image,
-    StyleSheet
+    StyleSheet,
+    Linking
 } from "react-native";
 import MapView from "react-native-maps";
 import {Theme} from "./Common"
@@ -37,7 +38,7 @@ export default class DetailsController extends Component {
 
         DataSource.fetchData("space/findOne", {
             "id": "EQ(" + info.placeId + ")",
-            "@select": "id,name,location,singleUrl,type,shortDescription,longDescription,terms,endereco,acessibilidade,site,eventOccurrences.*, eventOccurrences.event.*"
+            "@select": "id,name,location,singleUrl,type,shortDescription,longDescription,terms,endereco,acessibilidade,site,emailPublico,telefonePublico,eventOccurrences.*, eventOccurrences.event.*"
         }, (data) => {
             this.setState({loading: false, details: data});
             console.log('data = ', data);
@@ -120,7 +121,20 @@ export default class DetailsController extends Component {
                         </Text>
                     </TouchableOpacity>
                 ) : null}
-
+                {details.emailPublico && details.emailPublico.length > 0 ? (
+                    <TouchableOpacity style={styles.rowCenter} onPress={() => this.showEmail(details.emailPublico)}>
+                        <Text style={styles.rowLinkText}>
+                            <FAIcon name="envelope-open" size={18}/> {details.emailPublico}
+                        </Text>
+                    </TouchableOpacity>
+                ) : null}
+                {details.telefonePublico && details.telefonePublico.length > 0 ? (
+                    <TouchableOpacity style={styles.rowCenter} onPress={() => this.showPhone(details.telefonePublico)}>
+                        <Text style={styles.rowLinkText}>
+                            <FAIcon name="phone" size={18}/> {details.telefonePublico}
+                        </Text>
+                    </TouchableOpacity>
+                ) : null}
                 {details.eventOccurrences && details.eventOccurrences.length ? (
                     <View style={styles.row}>
                         <Text style={styles.events}><FAIcon name="calendar" size={18}/> {LS("Events")}</Text>
@@ -196,6 +210,14 @@ export default class DetailsController extends Component {
     showWebsite(url) {
         //this.props.navigator.push({id: "web", title: LS("Web Page"), url: url});
         Util.openLink(url);
+    }
+
+    showEmail(email) {
+        Linking.openURL("mailto:" + email);
+    }
+
+    showPhone(phonenumber) {
+        Linking.openURL("tel:" + phonenumber);
     }
 
 }
