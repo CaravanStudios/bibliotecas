@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {View, Text, TouchableOpacity, StyleSheet, Platform} from "react-native";
+import {View, Text, TouchableOpacity, StyleSheet, Platform, PixelRatio} from "react-native";
 import MapView from "react-native-maps";
 
 import {LS, FAIcon} from "./Common"
@@ -28,6 +28,7 @@ export default class BrowseMapView extends Component {
 
     componentDidMount() {
         //console.log("componentDidMount", this.props);
+        //console.log("pixel density = " + PixelRatio.get());
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -53,7 +54,7 @@ export default class BrowseMapView extends Component {
                                         coordinate={marker.coordinate}
                                         image={marker.markerImage}
                                         anchor={{x: 0, y: 1}}
-                                        centerOffset={{x: -25, y: 25}}
+                                        centerOffset={{x: 25/PixelRatio.get(), y: -25/PixelRatio.get()}}
                                         pinColor={this.pinColors[marker.type.Id]}
                                         onCalloutPress={() => this.onCalloutPress(marker)}
                                         title={marker.pinTitle}
